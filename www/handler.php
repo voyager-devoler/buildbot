@@ -39,3 +39,8 @@ function getBuildingIdByLabel($label)
 {
     return dbLink::getDB()->selectCell('select id fom mi_buildings where label=?',$label);
 }
+
+function getBuildingLabelById($building_id)
+{
+    return dbLink::getDB()->selectCell('select label fom mi_buildings where id=?d',$building_id);
+}
