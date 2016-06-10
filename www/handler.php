@@ -14,26 +14,25 @@ $targets = array(
 );
 require_once '../config.php';
 
-$wlog = new log2file('wlog.log');
-$wlog->write('Start');
+Model_Timeline::getInstance()->add2log('Start');
 $actions = new actions();
 $actions->initPlayer();
-$wlog->write('New player has been inited');
+Model_Timeline::getInstance()->add2log('New player has been inited');
 do{
     foreach ($targets as $target_key=>$current_target)
     {
         list($action,$params) = explode(':',$current_target);
-        $wlog->write("I have to {$action} {$params}");
+        Model_Timeline::getInstance()->add2log("I have to {$action} {$params}");
         if ($actions->startBuilding($params))
         {
-            $wlog->write("Start building {$params}");
+            Model_Timeline::getInstance()->add2log("Start building {$params}");
             unset($targets[$target_key]);
         }
         
     }
 }
 while (count($targets)>0);
-$wlog->write('I won!');
+Model_Timeline::getInstance()->add2log('I won!');
     
 function getBuildingIdByLabel($label)
 {
