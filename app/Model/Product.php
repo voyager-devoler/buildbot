@@ -8,7 +8,7 @@ class Model_Product extends Model_Abstract{
     public $price_one;
     public $base_amount;
     public $building_id;
-    public $ingridients;
+    public $ingredients;
     protected $_tablename = 'mi_products';
  
     public function __construct($product_id) {

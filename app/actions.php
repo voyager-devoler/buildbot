@@ -25,17 +25,18 @@ class actions {
         }
         // проверка по деньгам
         
-        $target_building = Model_Player::getInstance()->getFreeTargetBuilding('builderhouse');
-        if ($target_building == FALSE)
+        $target_building_id = Model_Player::getInstance()->getFreeTargetBuildingId('builderhouse');
+        if ($target_building_id === FALSE)
         {
             return FALSE;
         }
+        return Model_Timeline::getInstance()->addBuildEvent($target_building_id, $building_label);
     }
     
-    public function startUpgrade($building_id)
-    {
-        
-    }
+//    public function startUpgrade($building_id)
+//    {
+//        
+//    }
     
     /**
      * 
@@ -46,19 +47,19 @@ class actions {
     {
         $product_for_produce = new Model_Product($product_id);
         $enought_res_to_start = true;
-        foreach ($product_for_produce->ingridients as $ingridient_id=>$ingridient_quantity)
+        foreach ($product_for_produce->ingredients as $ingridient_id=>$ingredient) /* @var $ingredient Model_Ingredient */
         {
             $proficit = Model_Player::getInstance()->storage[$ingridient_id]
                 + Model_Timeline::getInstance()->getQuantityProductInProduction($product_id)
                 - Model_Timeline::getInstance()->reserve[$product_id];
-            if ($proficit < $ingridient_quantity)
+            if ($proficit < $ingredient->base_quantity)
             {// запускаем производство
                 $enought_res_to_start = false;
                 $prod_event = $this->startProduction($product_id);
                 if ($prod_event !== false)
                 {
-                    if ($prod_event->quantity > $ingridient_quantity - $proficit)
-                        $reserve_add = $ingridient_quantity - $proficit;
+                    if ($prod_event->quantity > $ingredient->base_quantity - $proficit)
+                        $reserve_add = $ingredient->base_quantity - $proficit;
                     else
                         $reserve_add = $prod_event->quantity;
                     Model_Timeline::getInstance()->reserve[$product_id] += $reserve_add;
@@ -67,34 +68,34 @@ class actions {
         }
         if ($enought_res_to_start)
         {
-            $target_building = Model_Player::getInstance()->getFreeTargetBuilding(getBuildingLabelById($product_for_produce->building_id));
-            if ($target_building == FALSE)
+            $target_building_id = Model_Player::getInstance()->getFreeTargetBuildingId(getBuildingLabelById($product_for_produce->building_id));
+            if ($target_building_id === FALSE)
             {
                 return false;
             }
-            return Model_Timeline::getInstance()->addProductionEvent($target_building, $product_id);
+            return Model_Timeline::getInstance()->addProductionEvent($target_building_id, $product_id);
         }
     }
     
-    public function collectProducts($building_id)
-    {
-        
-    }
+//    public function collectProducts($building_id)
+//    {
+//        
+//    }
     
     public function collectMoney($building_id)
     {
         
     }
     
-    public function finishBuilding($building_id)
-    {
-        
-    }
-
-    public function finishUpgrade($building_id)
-    {
-        
-    }
+//    public function finishBuilding($building_id)
+//    {
+//        
+//    }
+//
+//    public function finishUpgrade($building_id)
+//    {
+//        
+//    }
 
     public function initPlayer()
     {

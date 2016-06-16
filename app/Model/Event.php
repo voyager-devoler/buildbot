@@ -1,10 +1,13 @@
 <?php
+interface iEvent {
+    public function complete();
+}
 /**
  * Description of Event
  *
  * @author voyager
  */
-class Model_Event {
+abstract class Model_Event implements iEvent {
     public $type;
     public $state;
     public $init_time;

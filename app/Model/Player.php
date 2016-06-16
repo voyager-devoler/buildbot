@@ -33,9 +33,15 @@ class Model_Player extends Model_AbstractStatic {
         $player->setRowValue('money', $this->money + $val);
     }
     
-    public function getFreeTargetBuilding($building_type)
+    public function getFreeTargetBuildingId($building_type)
     {
+        foreach ($this->buildings as $id=>$building) /* @var $building Model_Building */
+        {
+            if ($building->label == $building_type && $building->state == 'ready')
+                return $id;
+        }
         
+        return false;
     }
     
     public function checkEnoughtResources($res_id, $need_quantity)

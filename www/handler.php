@@ -28,8 +28,10 @@ do{
             Model_Timeline::getInstance()->add2log("Start building {$params}");
             unset($targets[$target_key]);
         }
-        
     }
+    $event = Model_Timeline::getInstance()->getNearestEventAndSkipTime();
+    if (is_object($event))
+        $event->complete();
 }
 while (count($targets)>0);
 Model_Timeline::getInstance()->add2log('I won!');

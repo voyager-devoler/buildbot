@@ -7,7 +7,7 @@
 class Model_Timeline {
     protected static $_timeline = null;
     private static $_timeline_log;
-    public $current_time;
+    public $current_time = 0;
     public $events = array();
     public $reserve = array();
     
@@ -32,6 +32,10 @@ class Model_Timeline {
         return self::$_timeline;
     }
     
+    /**
+     * 
+     * @return Model_Event
+     */
     public function getNearestEventAndSkipTime()
     {
         if (count($this->events) == 0)
@@ -39,33 +43,43 @@ class Model_Timeline {
         $nearest_event = null;
         foreach ($this->events as $event) /* @var $event Model_Event */
         {
-            if (is_null($nearest_event) || $nearest_event->finish_time > $event->finish_time)
+            if (is_null($nearest_event) || ($event->state == 'in_progress' && $nearest_event->finish_time > $event->finish_time))
             {
                 $nearest_event = $event;
             }
         }
+        $this->current_time = $nearest_event->finish_time;
         return $nearest_event;
     }
     
     public function getQuantityProductInProduction($product_id)
     {
         $quantity = 0;
-        foreach ($this->events as $event)
+        foreach ($this->events as $event) /* @var $event Model_Event */
         {
-            if ($event->type == 'produce' && $event->product->id == $product_id)
+            if ($event->type == 'produce' && $event->state == 'in_progress' && $event->product->id == $product_id)
                 $quantity += $event->quantity;
         }
         return $quantity;
     }
     
+    /**
+     * 
+     * @param int $building_id
+     * @param int $product_id
+     * @return \Model_Events_Produce
+     */
     public function addProductionEvent($building_id, $product_id)
     {
         $event = new Model_Events_Produce($product_id, $building_id);
         $this->events[] = $event;
+        return $event;
     }
     
-    public function addBuildEvent()
+    public function addBuildEvent($building_id, $target_building_type)
     {
-        
+        $event = new Model_Events_Build($target_building_type, $building_id);
+        $this->events[] = $event;
+        return $event;
     }
 }

@@ -15,6 +15,7 @@ class log2file
         else
             $time='';
         fwrite($this->_log, $time.$text."\n");
+        echo $time.$text.'<br>';
     }
 
     public function close()
