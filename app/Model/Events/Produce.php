@@ -38,5 +38,6 @@ class Model_Events_Produce extends Model_Event {
         $this->state = 'completed';
         Model_Player::getInstance()->storage[$this->product->id] += $this->quantity;
         $this->building->state = 'ready';
+        Model_Timeline::getInstance()->add2log("{$this->product->name} ({$this->quantity} units) production complete");
     }
 }

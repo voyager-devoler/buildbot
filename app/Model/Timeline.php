@@ -12,13 +12,12 @@ class Model_Timeline {
     public $reserve = array();
     
     protected function __construct() {      
-        $this->current_time = time();
         self::$_timeline_log = new log2file('timeline.log');
     }
     
     public function add2log($text)
     {
-        self::$_timeline_log->write($text);
+        self::$_timeline_log->write($this->current_time." min: ".$text);
     }
     
     /**
@@ -43,7 +42,7 @@ class Model_Timeline {
         $nearest_event = null;
         foreach ($this->events as $event) /* @var $event Model_Event */
         {
-            if (is_null($nearest_event) || ($event->state == 'in_progress' && $nearest_event->finish_time > $event->finish_time))
+            if ($event->state == 'in_progress' && (is_null($nearest_event) || $nearest_event->finish_time > $event->finish_time))
             {
                 $nearest_event = $event;
             }

@@ -14,20 +14,27 @@ class actions {
     {
         $building_for_build = new Model_Building(getBuildingIdByLabel($building_label));
         // проверка по ресурсам
+        $enought_res_to_start = true;
         foreach($building_for_build->getResources(1) as $res_id=>$need_quantity)
         {
             if (Model_Player::getInstance()->storage[$res_id] 
                 + Model_Timeline::getInstance()->getQuantityProductInProduction($res_id) 
                 - Model_Timeline::getInstance()->reserve[$res_id] < $need_quantity)
             {// нужно запустить еще в производство
+                $res = new Model_Product($res_id);
+                Model_Timeline::getInstance()->add2log("I don't have anought resource {$res->name}");
+                $enought_res_to_start = false;
                 $this->startProduction($res_id);
             }
         }
+        if ($enought_res_to_start == false)
+            return false;
         // проверка по деньгам
         
         $target_building_id = Model_Player::getInstance()->getFreeTargetBuildingId('builderhouse');
         if ($target_building_id === FALSE)
         {
+            Model_Timeline::getInstance()->add2log("All builderhouses are busy");
             return FALSE;
         }
         return Model_Timeline::getInstance()->addBuildEvent($target_building_id, $building_label);
@@ -46,6 +53,7 @@ class actions {
     public function startProduction($product_id)
     {
         $product_for_produce = new Model_Product($product_id);
+        $product_for_produce->fillIngredients();
         $enought_res_to_start = true;
         foreach ($product_for_produce->ingredients as $ingridient_id=>$ingredient) /* @var $ingredient Model_Ingredient */
         {
@@ -68,9 +76,11 @@ class actions {
         }
         if ($enought_res_to_start)
         {
-            $target_building_id = Model_Player::getInstance()->getFreeTargetBuildingId(getBuildingLabelById($product_for_produce->building_id));
+            $label = getBuildingLabelById($product_for_produce->building_id);
+            $target_building_id = Model_Player::getInstance()->getFreeTargetBuildingId($label);
             if ($target_building_id === FALSE)
             {
+                Model_Timeline::getInstance()->add2log("All {$label}s are busy");
                 return false;
             }
             return Model_Timeline::getInstance()->addProductionEvent($target_building_id, $product_id);
@@ -104,6 +114,13 @@ class actions {
         foreach ($all_products_ids as $pid)
         {
             $player->storage[$pid] = 0;
+            Model_Timeline::getInstance()->reserve[$pid] = 0;
         }
+        $player->storage[2] = 125;
+        $player->storage[6] = 75;
+        $player->storage[7] = 90;
+        $player->storage[12] = 50;
+        $player->storage[3] = 50;
+        $player->buildings[] = new Model_Building(getBuildingIdByLabel('builderhouse'));
     }
 }

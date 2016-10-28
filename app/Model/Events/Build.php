@@ -10,7 +10,7 @@ class Model_Events_Build extends Model_Event {
     public $building;
     
     public function __construct($building_type, $building_id) {
-        $this->target_building = new Model_Building(getBuildingIdByLabel($this->target_building_type));
+        $this->target_building = new Model_Building(getBuildingIdByLabel($building_type));
         $this->building = Model_Player::getInstance()->buildings[$building_id];
         if ($this->building->label != 'builderhouse')
             throw new Exception ("Incorrect building type {$this->building->label} to start building new {$building_type}");
@@ -31,5 +31,6 @@ class Model_Events_Build extends Model_Event {
         $this->state = 'completed';
         Model_Player::getInstance()->buildings[] = $this->target_building;
         $this->building->state = 'ready';
+        Model_Timeline::getInstance()->add2log("{$this->target_building->label} building complete");
     }
 }

@@ -10,7 +10,7 @@ class Model_Building extends Model_Abstract
     
     public function getResources($level)
     {
-        return dbLink::getDB()->select('select res_id as ARRAY_KEY, res_quantity from mi_buildings_levels where bid=?d and level=?d',$this->id,$level);
+        return dbLink::getDB()->selectCol('select res_id as ARRAY_KEY, res_quantity from mi_buildings_levels where bid=?d and level=?d',$this->id,$level);
     }
     
     public function getTime2Build($level)

@@ -41,7 +41,7 @@ abstract class Model_AbstractStatic {
         foreach ($this->_dbRawArray as $property=>$value)
         {
             //if (property_exists(get_class($this), $property) && is_null($this->$property)) // только дополняем еще не установленные свойства. пока так
-            if (property_exists(get_class($this), $property) && (!$add_only || is_null($this->$property)))
+            if (property_exists(get_class($this), $property) && !$add_only)
                 $this->$property = $value;
             //if (is_string($value) && $value!=="" and $value!=_($value)) var_dump(self::$_textdomain, get_class($this));
             //else echo ' !'.$property;
@@ -50,7 +50,7 @@ abstract class Model_AbstractStatic {
     
     public function getFromDB($id)
     {
-        $this->_dbRawArray = $this->_db()->query('SELECT * from ?_'.$this->_tablename.' WHERE id=?', $id);
+        $this->_dbRawArray = $this->_db()->selectRow('SELECT * from ?_'.$this->_tablename.' WHERE id=?', $id);
         $this->_assoc2properties();
     }
 
