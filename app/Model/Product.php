@@ -3,6 +3,7 @@ class Model_Product extends Model_Abstract{
     
     public $id;
     public $name;
+    public $code;
     public $minutes;
     public $base_amount;
     public $base_level;
@@ -252,5 +253,3 @@ class Model_Product extends Model_Abstract{
         return array('effect' => abs(($old_profit-$new_profit)/$base_product->getAddValue()), 'ingr'=>$ing->id);
     }
 }
-
-?>
