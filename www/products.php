@@ -55,7 +55,7 @@ foreach ($prods as $prod)
     $prod_table_html .="<div class='col-md-4'>{$prod->getLinkHelper()}</div>";
     $prod_table_html .="<div class='col-md-2'>{$prod->base_level}</div>";
     $prod_table_html .="<div class='col-md-2'>{$prod->minutes}</div>";
-    $prod_table_html .="<div class='col-md-2'>{$prod->price_one}</div>";
+    $prod_table_html .="<div class='col-md-2'>{$prod->price}</div>";
     $prod_table_html .="<div class='col-md-2'>{$prod->base_amount}</div>";
 }
 $prod_table_html.="</div>";
@@ -102,6 +102,7 @@ if (isset($_GET['p']))
     foreach ($progress as $level=>$level_data)
     {
         $prod_progress_html[$level] = "<div class='col-md-2'>{$level}</div><div class='col-md-2 bg-warning'>{$level_data['amount']}</div>";
+        if (isset($level_data['ings']))
         foreach ($level_data['ings'] as $ing_count)
         {
             $prod_progress_html[$level].= "<div class='col-md-2'>{$ing_count}</div>";

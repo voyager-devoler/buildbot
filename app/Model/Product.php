@@ -4,16 +4,16 @@ class Model_Product extends Model_Abstract{
     public $id;
     public $name;
     public $minutes;
-    public $price_one;
     public $base_amount;
     public $base_level;
     public $price;
+    public $cost_coins;
     public $building_id;
     public $base_quantity = 1;
     public $ingredients = array();
     public $is_food;
-    protected $_tablename = 'mi_products';
-    
+    //protected $_tablename = 'mi_products';
+    protected $_tablename = 'products';    
     protected $_allIngredients =  null;
     
     public function __construct($object_id) {
@@ -24,12 +24,13 @@ class Model_Product extends Model_Abstract{
 
     public function fillIngredients()
     {
-        $ingredients_data = $this->_db()->select('select ingredient_id, base_quantity from mi_prod_content where prod_id=?d', $this->id);
+        //$ingredients_data = $this->_db()->select('select ingredient_id, base_quantity from mi_prod_content where prod_id=?d', $this->id);
+        $ingredients_data = $this->_db()->select('select id_ingredient, base_quantity from product_ingredients where id_product=?d', $this->id);
         foreach ($ingredients_data as $ing)
         {
-            $this->ingredients[$ing['ingredient_id']] = new Model_Product($ing['ingredient_id']);
-            $this->ingredients[$ing['ingredient_id']]->base_quantity = $ing['base_quantity'];
-            $this->ingredients[$ing['ingredient_id']]->fillIngredients();
+            $this->ingredients[$ing['id_ingredient']] = new Model_Product($ing['id_ingredient']);
+            $this->ingredients[$ing['id_ingredient']]->base_quantity = $ing['base_quantity'];
+            $this->ingredients[$ing['id_ingredient']]->fillIngredients();
         }
     }
     
@@ -80,9 +81,9 @@ class Model_Product extends Model_Abstract{
         $ing_value = 0;
         foreach ($this->ingredients as $ing)
         {
-            $ing_value += $ing->price_one * $ing->base_quantity;
+            $ing_value += $ing->price * $ing->base_quantity;
         }
-        return $this->price_one * $this->base_amount - $ing_value;
+        return ($this->price - $this->cost_coins) * $this->base_amount - $ing_value;
     }
     
     public function modifyProductToProdLevel(Model_Product $base_product, $target_level)
