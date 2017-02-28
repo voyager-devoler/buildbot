@@ -133,7 +133,7 @@ if (isset($product))
     echo "</div>";
     echo "<div class='col-md-10'>";
     echo "<div class='row'>";
-    echo "<div class='col-md-6'><h2>{$product->name}</h2>";
+    echo "<div class='col-md-6'><h2>{$product->name} ({$product->code})</h2>";
     echo $prod_structure_html;
     echo "</div>";
     echo "<div class='col-md-6'>Расчет количества ресурсов на партию для референсных уровней:";
